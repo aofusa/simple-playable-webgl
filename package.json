@@ -4,13 +4,16 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "dev": "farm",
+    "start": "farm",
+    "build": "farm build",
+    "preview": "farm preview",
+    "clean": "farm clean"
   },
   "devDependencies": {
-    "typescript": "^5.2.2",
-    "vite": "^5.3.1"
+    "@farmfe/cli": "^1.0.2",
+    "@farmfe/core": "^1.1.13",
+    "typescript": "^5.4.3"
   },
   "dependencies": {
     "gl-matrix": "^3.4.3"
