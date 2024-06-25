@@ -1,21 +1,40 @@
-import { initShaderProgram } from "./Shader"
+import { initShaderProgram } from "./ShaderCompiler"
+import type { ProgramInfoInterface } from "./ShaderProgramInterface"
 
 
-export type AttribLocations = {
+type AttribLocations = {
 	vertexPosition: number,
 }
 
 
-export type UniformLocations = {
+type UniformLocations = {
 	projectionMatrix: WebGLUniformLocation,
 	modelViewMatrix: WebGLUniformLocation,
 }
 
 
-export type ProgramInfo = {
-	program: WebGLProgram,
-	attribLocations: AttribLocations,
-	uniformLocations: UniformLocations,
+export class ProgramInfo implements ProgramInfoInterface {
+	program: WebGLProgram
+	attribLocations: Map<string, number>
+	uniformLocations: Map<string, WebGLUniformLocation>
+
+	constructor(program: WebGLProgram, attribLocations: AttribLocations, uniformLocations: UniformLocations) {
+		this.program = program
+		this.attribLocations = new Map(Object.entries(attribLocations))
+		this.uniformLocations = new Map(Object.entries(uniformLocations))
+	}
+
+	getProgram(): WebGLProgram {
+		return this.program
+	}
+
+	getAttribLocation(name: string): number | undefined {
+		return this.attribLocations.get(name)
+	}
+
+	getUniformLocation(name: string): WebGLUniformLocation | undefined {
+		return this.uniformLocations.get(name)
+	}
 }
 
 
@@ -65,16 +84,17 @@ export function createShaderProgram(gl: WebGL2RenderingContext): ProgramInfo | n
 		return null
 	}
 
-	const programInfo: ProgramInfo = {
-		program: shaderProgram,
-		attribLocations: {
+
+	const programInfo = new ProgramInfo(
+		shaderProgram,
+		{
 			vertexPosition: vertexPosition,
 		},
-		uniformLocations: {
+		{
 			projectionMatrix: projectionMatrix,
 			modelViewMatrix: modelViewMatrix,
 		}
-	}
+	)
 
 	return programInfo
 }
