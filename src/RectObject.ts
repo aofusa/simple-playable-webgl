@@ -31,7 +31,7 @@ export class RectObject implements DrawableInterface {
 		)
 	}
 
-	update() {
+	update(_dt: DOMHighResTimeStamp) {
 	}
 	
 	draw(gl: WebGL2RenderingContext) {

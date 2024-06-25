@@ -16,17 +16,29 @@ export function setupGLCanvasGraphics(canvas: HTMLCanvasElement) {
 		return
 	}
 
-	const render = () => {
-		eventLoop(gl, sceneContext)
+	setupRender(gl, sceneContext)
+}
+
+
+function eventLoop(gl: WebGL2RenderingContext, scene: SceneContext, dt: DOMHighResTimeStamp) {
+	updateScene(scene, dt)
+	drawScene(gl, scene)
+}
+
+
+function setupRender(gl: WebGL2RenderingContext, scene: SceneContext) {
+	const fps = import.meta.env.VITE_STANDARD_FPS
+	const fpsMillSecond = 1000 / fps
+	let then: DOMHighResTimeStamp = performance.now()
+
+	const render = (now: DOMHighResTimeStamp) => {
+		const deltaTime = (now - then) / fpsMillSecond  // 1秒間にfpsで規定された時間処理されることを期待する
+		then = now
+
+		eventLoop(gl, scene, deltaTime)
 		requestAnimationFrame(render)
 	}
 
 	requestAnimationFrame(render)
-}
-
-
-function eventLoop(gl: WebGL2RenderingContext, scene: SceneContext) {
-	updateScene(scene)
-	drawScene(gl, scene)
 }
 

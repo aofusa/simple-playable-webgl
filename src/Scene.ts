@@ -81,12 +81,13 @@ export function initScene(gl: WebGL2RenderingContext): SceneContext | null {
 }
 
 
-export function updateScene(scene: SceneContext) {
+export function updateScene(scene: SceneContext, dt: DOMHighResTimeStamp) {
 	// カメラの移動
-	if (KeyState.right) {scene.camera.position[0] -= 0.1}
-	if (KeyState.left) {scene.camera.position[0] += 0.1}
-	if (KeyState.up) {scene.camera.position[2] += 0.1}
-	if (KeyState.down) {scene.camera.position[2] -= 0.1}
+	if (KeyState.right) {scene.camera.position[0] -= 0.1 * dt}
+	if (KeyState.left) {scene.camera.position[0] += 0.1 * dt}
+	if (KeyState.up) {scene.camera.position[2] += 0.1 * dt}
+	if (KeyState.down) {scene.camera.position[2] -= 0.1 * dt}
+	// console.log(dt)
 
 	mat4.identity(scene.modelViewMatrix)
 	mat4.translate(
@@ -96,7 +97,7 @@ export function updateScene(scene: SceneContext) {
 	)
 
 	// console.log('camera: ', scene.camera.position)
-	scene.objects.forEach((obj, _index, _array) => obj.update())
+	scene.objects.forEach((obj, _index, _array) => obj.update(dt))
 }
 
 
