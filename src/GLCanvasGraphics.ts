@@ -2,9 +2,6 @@ import { drawScene, initScene, updateScene } from "./Scene"
 import type { SceneContext } from "./Scene"
 
 
-const FPS = 1000 / 60
-
-
 export function setupGLCanvasGraphics(canvas: HTMLCanvasElement) {
 	const gl = canvas.getContext("webgl2")
 
@@ -19,7 +16,12 @@ export function setupGLCanvasGraphics(canvas: HTMLCanvasElement) {
 		return
 	}
 
-	setInterval(eventLoop, FPS, gl, sceneContext)
+	const render = () => {
+		eventLoop(gl, sceneContext)
+		requestAnimationFrame(render)
+	}
+
+	requestAnimationFrame(render)
 }
 
 
