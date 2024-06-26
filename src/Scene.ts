@@ -4,6 +4,7 @@ import { createShaderProgram as createColorShaderProgram } from "./ColorShaderPr
 import { KeyState } from "./KeyInput"
 import { RectObject } from "./RectObject"
 import type { DrawableInterface } from "./DrawableInterface"
+import { RainbowRectObject } from "./RainbowRectObject"
 
 
 export type Camera = {
@@ -70,6 +71,9 @@ export function initScene(gl: WebGL2RenderingContext): SceneContext | null {
 
 	sceneContext.objects.push(simpleRectObject)
 	sceneContext.objects.push(colorRectObject)
+
+	const rainbowRectObject = new RainbowRectObject(gl, vec3.fromValues(-2.5, 0, 0), colorProgramInfo, sceneContext)
+	sceneContext.objects.push(rainbowRectObject)
 
 	// 描写前のWebGL設定
 	gl.clearColor(0.0, 0.0, 0.0, 1.0)
