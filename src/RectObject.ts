@@ -22,7 +22,7 @@ export class RectObject implements DrawableInterface {
 		this.buffers = buffers
 
 		this.scene = scene
-		
+
 		this.positionMatrix = mat4.create()
 		mat4.translate(
 			this.positionMatrix,
@@ -33,23 +33,23 @@ export class RectObject implements DrawableInterface {
 
 	update(_dt: DOMHighResTimeStamp) {
 	}
-	
+
 	draw(gl: WebGL2RenderingContext) {
 		// WebGLに頂点や変換行列の情報を伝える
 		setPositionAttribute(gl, this.buffers, this.programInfo)
 		setColorAttribute(gl, this.buffers, this.programInfo)
 		gl.useProgram(this.programInfo.getProgram())
-	
+
 		const projectionMatrixLocation = this.programInfo.getUniformLocation("projectionMatrix")
 		const modelViewMatrixLocation = this.programInfo.getUniformLocation("modelViewMatrix")
-		
+
 		if (projectionMatrixLocation === undefined || modelViewMatrixLocation === undefined) {
 			console.warn("undefined model view projection matrix in shader. skip")
 			return
 		}
 
 		const modelViewMatrix = mat4.create()
-		mat4.mul(modelViewMatrix, this.positionMatrix, this.scene.modelViewMatrix)
+		mat4.mul(modelViewMatrix, this.scene.modelViewMatrix, this.positionMatrix)
 
 		gl.uniformMatrix4fv(
 			projectionMatrixLocation,
@@ -61,7 +61,7 @@ export class RectObject implements DrawableInterface {
 			false,
 			modelViewMatrix
 		)
-	
+
 		// 描画する
 		{
 			const offset = 0  // 描画を始める頂点配列のオフセット

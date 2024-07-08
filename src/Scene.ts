@@ -33,10 +33,12 @@ export function initScene(gl: WebGL2RenderingContext): SceneContext | null {
 	mat4.perspective(projectionMatrix, camera.fieldOfView, camera.aspect, camera.zNear, camera.zFar)
 
 	const modelViewMatrix = mat4.create()
+	const center = vec3.create()
+	vec3.add(center, camera.position, camera.center)
 	mat4.lookAt(
 		modelViewMatrix,
 		camera.position,
-		camera.center,
+		center,
 		camera.up
 	)
 
@@ -70,7 +72,7 @@ export function initScene(gl: WebGL2RenderingContext): SceneContext | null {
 	const rainbowRectObject = new RainbowRectObject(gl, vec3.fromValues(-2.5, 0, 0), colorProgramInfo, sceneContext)
 	sceneContext.objects.push(rainbowRectObject)
 
-	const boxObject = new BoxObject(gl, vec3.fromValues(0, 2.5, 0), colorProgramInfo, sceneContext)
+	const boxObject = new BoxObject(gl, vec3.fromValues(0, 3, 0), colorProgramInfo, sceneContext)
 	sceneContext.objects.push(boxObject)
 
 	// 描写前のWebGL設定
@@ -87,10 +89,13 @@ export function updateScene(scene: SceneContext, dt: DOMHighResTimeStamp) {
 	scene.camera.update(dt)
 
 	mat4.identity(scene.modelViewMatrix)
-	mat4.translate(
+	const center = vec3.create()
+	vec3.add(center, scene.camera.position, scene.camera.center)
+	mat4.lookAt(
 		scene.modelViewMatrix,
-		scene.modelViewMatrix,
-		scene.camera.position
+		scene.camera.position,
+		center,
+		scene.camera.up
 	)
 
 	scene.objects.forEach((obj, _index, _array) => obj.update(dt))

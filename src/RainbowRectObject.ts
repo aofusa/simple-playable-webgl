@@ -30,7 +30,7 @@ export class RainbowRectObject implements DrawableInterface {
 		])
 
 		this.scene = scene
-		
+
 		this.positionMatrix = mat4.create()
 		mat4.translate(
 			this.positionMatrix,
@@ -56,39 +56,39 @@ export class RainbowRectObject implements DrawableInterface {
 		leftUpper[1] = rotateColors[0][1]
 		leftUpper[2] = rotateColors[0][2]
 		leftUpper[3] = rotateColors[0][3]
-		
+
 		rightUpper[0] = rotateColors[1][0]
 		rightUpper[1] = rotateColors[1][1]
 		rightUpper[2] = rotateColors[1][2]
 		rightUpper[3] = rotateColors[1][3]
-		
+
 		leftLower[0] = rotateColors[2][0]
 		leftLower[1] = rotateColors[2][1]
 		leftLower[2] = rotateColors[2][2]
 		leftLower[3] = rotateColors[2][3]
-		
+
 		rightLower[0] = rotateColors[3][0]
 		rightLower[1] = rotateColors[3][1]
 		rightLower[2] = rotateColors[3][2]
 		rightLower[3] = rotateColors[3][3]
 	}
-	
+
 	draw(gl: WebGL2RenderingContext) {
 		// WebGLに頂点や変換行列の情報を伝える
 		setPositionAttribute(gl, this.buffers, this.programInfo)
 		setColorAttribute(gl, this.buffers, this.programInfo)
 		gl.useProgram(this.programInfo.getProgram())
-	
+
 		const projectionMatrixLocation = this.programInfo.getUniformLocation("projectionMatrix")
 		const modelViewMatrixLocation = this.programInfo.getUniformLocation("modelViewMatrix")
-		
+
 		if (projectionMatrixLocation === undefined || modelViewMatrixLocation === undefined) {
 			console.warn("undefined model view projection matrix in shader. skip")
 			return
 		}
 
 		const modelViewMatrix = mat4.create()
-		mat4.mul(modelViewMatrix, this.positionMatrix, this.scene.modelViewMatrix)
+		mat4.mul(modelViewMatrix, this.scene.modelViewMatrix, this.positionMatrix)
 
 		gl.uniformMatrix4fv(
 			projectionMatrixLocation,
@@ -104,7 +104,7 @@ export class RainbowRectObject implements DrawableInterface {
 		// 各頂点の頂点カラーを更新する
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.color)
 		gl.bufferData(gl.ARRAY_BUFFER, this.color, gl.STATIC_DRAW)
-	
+
 		// 描画する
 		{
 			const offset = 0  // 描画を始める頂点配列のオフセット
@@ -211,7 +211,7 @@ function hsv2rgb(hsv: vec4): vec4 {
 	const saturation = hsv[1] * 255.0
 	const valueBrightness = hsv[2] * 255.0
 	// const alpha = hsv[3] * 255.0
-	
+
 	const max = Math.max(saturation, valueBrightness)
 	const min = max - ((saturation / 255.0) * max)
 
