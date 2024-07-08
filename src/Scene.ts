@@ -1,20 +1,11 @@
 import { mat4, vec3 } from "gl-matrix"
 import { createShaderProgram as createSimpleShaderProgram } from "./SimpleShaderProgram"
 import { createShaderProgram as createColorShaderProgram } from "./ColorShaderProgram"
-import { KeyState } from "./KeyInput"
 import { RectObject } from "./RectObject"
 import type { DrawableInterface } from "./DrawableInterface"
 import { RainbowRectObject } from "./RainbowRectObject"
 import { BoxObject } from "./BoxObject"
-
-
-export type Camera = {
-	fieldOfView: number,
-	aspect: number,
-	zNear: number,
-	zFar: number,
-	position: vec3,
-}
+import { Camera } from "./SimpleCamera"
 
 
 export type SceneContext = {
@@ -27,13 +18,13 @@ export type SceneContext = {
 
 export function initScene(gl: WebGL2RenderingContext): SceneContext | null {
 	// カメラの設定を行う
-	const camera: Camera = {
-		fieldOfView: (45 * Math.PI) / 100,  // 視野角45度のラジアン表記
-		aspect: gl.canvas.width / gl.canvas.height,  // アスペクト比は描画先キャンパスサイズと合わせる
-		zNear: 0.1,  // nearクリップ距離
-		zFar: 100.0,  // farクリップ距離
-		position: [-0.0, 0.0, -6.0],  // Z方向に少し引く
-	}
+	const camera = new Camera(
+		(45 * Math.PI) / 100,  // 視野角45度のラジアン表記
+		gl.canvas.width / gl.canvas.height,  // アスペクト比は描画先キャンパスサイズと合わせる
+		0.1,  // nearクリップ距離
+		100.0,  // farクリップ距離
+		[-0.0, 0.0, -6.0]  // Z方向に少し引く
+	)
 
 	// 描画用の行列設定
 	const projectionMatrix = mat4.create()
@@ -76,7 +67,7 @@ export function initScene(gl: WebGL2RenderingContext): SceneContext | null {
 	const rainbowRectObject = new RainbowRectObject(gl, vec3.fromValues(-2.5, 0, 0), colorProgramInfo, sceneContext)
 	sceneContext.objects.push(rainbowRectObject)
 
-	const boxObject = new BoxObject(gl, vec3.fromValues(0, 3, 0), colorProgramInfo, sceneContext)
+	const boxObject = new BoxObject(gl, vec3.fromValues(0, 2.5, 0), colorProgramInfo, sceneContext)
 	sceneContext.objects.push(boxObject)
 
 	// 描写前のWebGL設定
@@ -90,12 +81,7 @@ export function initScene(gl: WebGL2RenderingContext): SceneContext | null {
 
 
 export function updateScene(scene: SceneContext, dt: DOMHighResTimeStamp) {
-	// カメラの移動
-	if (KeyState.right) {scene.camera.position[0] -= 0.1 * dt}
-	if (KeyState.left) {scene.camera.position[0] += 0.1 * dt}
-	if (KeyState.up) {scene.camera.position[2] += 0.1 * dt}
-	if (KeyState.down) {scene.camera.position[2] -= 0.1 * dt}
-	// console.log(dt)
+	scene.camera.update(dt)
 
 	mat4.identity(scene.modelViewMatrix)
 	mat4.translate(
@@ -104,7 +90,6 @@ export function updateScene(scene: SceneContext, dt: DOMHighResTimeStamp) {
 		scene.camera.position
 	)
 
-	// console.log('camera: ', scene.camera.position)
 	scene.objects.forEach((obj, _index, _array) => obj.update(dt))
 }
 
