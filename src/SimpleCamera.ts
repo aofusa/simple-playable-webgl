@@ -8,13 +8,17 @@ export class Camera {
 	zNear: number
 	zFar: number
 	position: vec3
+	center: vec3
+	up: vec3
 
-	constructor(fieldOfView: number, aspect: number, zNear: number, zFar: number, position: vec3) {
+	constructor(fieldOfView: number, aspect: number, zNear: number, zFar: number, position: vec3, center: vec3, up: vec3) {
 		this.fieldOfView = fieldOfView
 		this.aspect = aspect
 		this.zNear = zNear
 		this.zFar = zFar
 		this.position = position
+		this.center = center
+		this.up = up
 	}
 
 	update(dt: DOMHighResTimeStamp) {

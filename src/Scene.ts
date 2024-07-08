@@ -23,7 +23,9 @@ export function initScene(gl: WebGL2RenderingContext): SceneContext | null {
 		gl.canvas.width / gl.canvas.height,  // アスペクト比は描画先キャンパスサイズと合わせる
 		0.1,  // nearクリップ距離
 		100.0,  // farクリップ距離
-		[-0.0, 0.0, -6.0]  // Z方向に少し引く
+		[-0.0, 0.0, -6.0],  // Z方向に少し引く
+		[0.0, 0.0, 1.0],  // 奥を見る
+		[0.0, 1.0, 0.0]  // 上は上
 	)
 
 	// 描画用の行列設定
@@ -31,10 +33,11 @@ export function initScene(gl: WebGL2RenderingContext): SceneContext | null {
 	mat4.perspective(projectionMatrix, camera.fieldOfView, camera.aspect, camera.zNear, camera.zFar)
 
 	const modelViewMatrix = mat4.create()
-	mat4.translate(
+	mat4.lookAt(
 		modelViewMatrix,
-		modelViewMatrix,
-		camera.position
+		camera.position,
+		camera.center,
+		camera.up
 	)
 
 	// 描画するシーン情報の作成
