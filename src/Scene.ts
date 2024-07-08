@@ -5,6 +5,7 @@ import { KeyState } from "./KeyInput"
 import { RectObject } from "./RectObject"
 import type { DrawableInterface } from "./DrawableInterface"
 import { RainbowRectObject } from "./RainbowRectObject"
+import { BoxObject } from "./BoxObject"
 
 
 export type Camera = {
@@ -74,6 +75,9 @@ export function initScene(gl: WebGL2RenderingContext): SceneContext | null {
 
 	const rainbowRectObject = new RainbowRectObject(gl, vec3.fromValues(-2.5, 0, 0), colorProgramInfo, sceneContext)
 	sceneContext.objects.push(rainbowRectObject)
+
+	const boxObject = new BoxObject(gl, vec3.fromValues(0, 3, 0), colorProgramInfo, sceneContext)
+	sceneContext.objects.push(boxObject)
 
 	// 描写前のWebGL設定
 	gl.clearColor(0.0, 0.0, 0.0, 1.0)
