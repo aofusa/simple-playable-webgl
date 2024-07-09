@@ -2,7 +2,7 @@ import type { DrawableInterface } from './DrawableInterface'
 import type { ProgramInfoInterface } from "./ShaderProgramInterface"
 import { initBuffers, type PositionBuffer } from "./BoxBuffer"
 import type { SceneContext } from './Scene'
-import { mat4, vec3 } from 'gl-matrix'
+import { mat4, quat, vec3 } from 'gl-matrix'
 
 
 export class BoxObject implements DrawableInterface {
@@ -34,9 +34,9 @@ export class BoxObject implements DrawableInterface {
 	}
 
 	update(dt: DOMHighResTimeStamp) {
-		this.rotation[0] += 0.01 * dt
-		this.rotation[1] += 0.01 * 0.7 * dt
-		this.rotation[2] += 0.01 * 0.3 * dt
+		this.rotation[0] += 1 * dt
+		this.rotation[1] += 1 * 0.7 * dt
+		this.rotation[2] += 1 * 0.3 * dt
 	}
 
 	draw(gl: WebGL2RenderingContext) {
@@ -55,24 +55,11 @@ export class BoxObject implements DrawableInterface {
 		}
 
 		const modelViewMatrix = mat4.create()
-		mat4.rotate(
-			modelViewMatrix,
-			modelViewMatrix,
-			this.rotation[2],
-			[0, 0, 1]
-		)
-		mat4.rotate(
-			modelViewMatrix,
-			modelViewMatrix,
-			this.rotation[1],
-			[0, 1, 0]
-		)
-		mat4.rotate(
-			modelViewMatrix,
-			modelViewMatrix,
-			this.rotation[0],
-			[1, 0, 0]
-		)
+		const rotationQuat = quat.create()
+		const rotationMatrix = mat4.create()
+		quat.fromEuler(rotationQuat, this.rotation[0], this.rotation[1], this.rotation[2])
+		mat4.fromQuat(rotationMatrix, rotationQuat)
+		mat4.mul(modelViewMatrix, rotationMatrix, modelViewMatrix)
 		mat4.mul(modelViewMatrix, this.positionMatrix, modelViewMatrix)
 		mat4.mul(modelViewMatrix, this.scene.modelViewMatrix, modelViewMatrix)
 
