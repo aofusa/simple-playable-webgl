@@ -1,4 +1,4 @@
-import { mat4, quat, vec3, vec4 } from "gl-matrix"
+import { quat, vec3 } from "gl-matrix"
 import { KeyState } from "./KeyInput"
 import { MouseState } from "./MouseInput"
 
